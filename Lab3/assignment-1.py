@@ -1,0 +1,41 @@
+import numpy as np
+import pandas as pd
+
+from linear_regression import LinearRegression
+
+df = pd.read_csv("../Lab1/openalex_papers.csv")
+
+x = df[["Năm xuất bản", "Số tác giả"]].to_numpy(dtype=np.float64)
+y = df["Số lượt trích dẫn"].to_numpy(dtype=np.float64)
+
+np.random.seed(42)
+indices = np.random.permutation(len(x))
+
+train_size = int(0.8 * len(x))
+
+train_idx = indices[:train_size]
+test_idx = indices[train_size:]
+
+x_train = x[train_idx]
+y_train = y[train_idx]
+
+x_test = x[test_idx]
+y_test = y[test_idx]
+
+
+model = LinearRegression()
+model.fit(x_train, y_train)
+
+y_hat = model.predict(x_test)
+
+results = model.evaluate(y_test, y_hat)
+
+print("Hệ số hồi quy: ", model.beta)
+print("Giá trị hàm mất mát: ", model.losses[-1])
+
+print ("\nKết quả đánh giá:")
+for metric, value in results.items():
+    print(f"{metric}: {value:.4f}")
+
+
+
